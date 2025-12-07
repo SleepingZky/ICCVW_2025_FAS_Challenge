@@ -1,0 +1,97 @@
+seed: 1234
+torch_home: models/torch
+num_workers: 20
+
+dataset:
+  name: RealFakeDataset
+  RealFakeDataset:
+    debug: False
+    dataset_root: data
+    quality_json: data/MSCOCO_train2017.json
+
+val:
+  batch_size: 96
+  dataset:
+    img_size: 224
+    data_name: 
+    list_path: v4/Protocol-val.txt
+    phase: phase1
+
+test:
+  batch_size: 96
+  record_results: True
+  dataset:
+    img_size: 224
+    data_name: 
+    list_path: v4/Protocol-test.txt
+    phase: phase2
+
+transform:
+  image_size: 224
+  mean: [0.48145466, 0.4578275, 0.40821073]
+  std: [0.26862954, 0.26130258, 0.27577711]
+  random_mask: False
+  is_crop: True
+  crop_size: 224
+  jpeg_quality: 100
+  p_jpeg_fake: 0.5
+  p_png_real: 0.0
+  p_pixelmix: 0.2
+  r_pixelmix: 0.8
+  meth_pixelmix: uniform
+  p_freqmix: 0.2
+  r_freqmix: 0.8
+  meth_freqmix: uniform
+  freqmix_patch_ratio: 1.0
+  mix_color_space: 'RGB, YCbCr'
+  down_resize_factors: 0.2
+  upper_resize_factors: 3.0
+
+model:
+  name: ICCVModel
+  pretrain: True
+  ckpt_path: 
+  resume_path:
+  params:
+    # dino_name: dinov2_vitl14
+    MODEL:
+      BACKBONE:
+        NAME: "ViT-L/14" 
+      CLASSNAME: 2
+
+loss:
+  name: BCEWithLogitsLoss
+  weight: 1.0
+  params:
+    reduction: mean
+
+loss_2:
+  name: ContrastiveLoss
+  weight: 0.1
+  params:
+    pos_margin: 0.0
+    neg_margin: 1.0
+
+optimizer:
+  name: Adam
+  params:
+    lr: 0.0001
+    beta1: 0.9
+    weight_decay: 0.0
+
+scheduler:
+  name: CosineAnnealingLR
+  params:
+    eta_min: 0.000001
+    T_max: 1000
+
+wandb:
+  project: ICCV
+  group: ICCV
+  mode: offline
+  job_type:
+  id:
+  resume:
+  save_code: True
+  name:
+  notes:
